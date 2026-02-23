@@ -1,0 +1,10 @@
+BACKSPACE = "\x7f"
+DEL = "\x08"
+ENTER = "\r"
+CTRLC = "\x03"
+ESC = "\x1b"
+NEW_LINE = "\n"
+
+CLEAR_TO_EOL = "\033[K"
+SAVE_CURSOR = "\033[s"
+RESTORE_CURSOR = "\033[u"
