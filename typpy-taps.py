@@ -21,85 +21,74 @@ def getch():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
 
-def typing_test(target):
+def typing_test():
 
-    index = 0
-    wrong_count = 0
-    total_typed = 0
-    success = False
-    
-    start_time = time.time()
+    try:
+        game = (Game()).set_size(SentenceSize.MEDIUM).set_target()
 
-    singleprint("Type the following line: ")
-    save_cursor()
-    
-    multiprint([target, "↑"])
+        if not game.initialized:
+            raise Exception("Something's fucked")
 
-    while True:
-        if index == len(target):
-            success = True
-            break
+        game.start()    
 
-        try:
+        singleprint("Type the following line: ")
+        save_cursor()
+        
+        multiprint([game.get_target(), "↑"])
+
+        while True:
+            if game.get_index() == len(game.get_target()):
+                break
+
             char = getch()
 
             if char in {ENTER, ESC, CTRLC}:
-                break
+                raise KeyboardInterrupt
 
             if char not in {BACKSPACE, DEL}:
-                total_typed += 1
+                game.increase_total_typed()
 
-            expected_char = target[index] if index < len(target) else None
-
+            expected_char = game.get_current_char()
 
             if char == BACKSPACE:
-                if index>0:
-                    index -= 1
-                display_line = f"\033[32m{target[:index]}\033[0m{target[index:]}"
-                pointer_line = (" " * index) + f"↑"
+                game.decrease_index()
+                display_line = f"\033[32m{game.get_target()[:game.get_index()]}\033[0m{game.get_target()[game.get_index():]}"
+                pointer_line = (" " * game.get_index()) + f"↑"
             elif expected_char == char:
-                index += 1
-                display_line = f"\033[32m{target[:index]}\033[0m{target[index:]}"
-                pointer_line = (" " * index) + f"↑"
+                game.increase_index()
+                display_line = f"\033[32m{game.get_target()[:game.get_index()]}\033[0m{game.get_target()[game.get_index():]}"
+                pointer_line = (" " * game.get_index()) + f"↑"
             else:
-                passed_portion = target[:index]
-                leftover_portion = target[index:]
-                wrong_count += 1
+                game.increase_mistakes()
+                passed_portion = game.get_target()[:game.get_index()]
+                leftover_portion = game.get_target()[game.get_index():]
                 display_line = (
                     f"\033[32m{passed_portion}\033[0m"+f"\033[31m{char}\033[0m"+f"{leftover_portion}"
                 )
-                pointer_line = (" " * (index+1)) + f"↑"
+                pointer_line = (" " * (game.get_index()+1)) + f"↑"
 
             multiprint([display_line, pointer_line])
 
-        except KeyboardInterrupt:
-            break
+            
 
+        game.set_end_time()
+        game.set_result()
 
-    end_time = time.time()
-    elapsed = end_time - start_time
+        if game.is_won():
+            multiprint([
+                "Done!",
+                f"Time: {game.get_time_elapsed():.2f}s",
+                f"Wrong characters: {game.get_mistakes()}",
+                f"Total typed: {game.get_total_typed()}",
+                f"Accuracy: {((game.get_total_typed() - game.get_mistakes()) / game.get_total_typed()) * 100:.2f}%",
+            ])
+        else:
+            singleprint("Well that absolutely sucked wtf")
 
-    if success:
-        multiprint([
-            "Done!",
-            f"Time: {elapsed:.2f}s",
-            f"Wrong characters: {wrong_count}",
-            f"Total typed: {total_typed}",
-            f"Accuracy: {((total_typed - wrong_count) / total_typed) * 100:.2f}%",
-        ])
-    else:
-        singleprint("\nWell that absolutely sucked wtf")
+    except KeyboardInterrupt:
+        singleprint("Game ended by user")
+    except Exception as e:
+        singleprint(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
-    try:
-
-        game = (Game()).set_size(SentenceSize.MEDIUM).set_target()
-        
-        print(vars(game))
-
-        if game.initialized:
-            print('Good to go')
-        else:
-            print('shit to go')
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+    typing_test()
