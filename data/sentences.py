@@ -15,13 +15,13 @@ _SENTENCES = {
     ],
     SentenceSize.SMALL: [
         'The brown fox jumps over dogs.'
-        'Typing fast is ] satisfying!'
+        'Typing fast is satisfying!'
         'Keys clack, fingers attack.'
         'Hello, world! Lets code.'
         'Caps lock is my mortal enemy.'
     ],
     SentenceSize.MEDIUM: [
-        "I accidentally wore socks that didn’t match today.",
+        "I accidentally wore socks that didn't match today.",
         "The dog tried to chase its own shadow again.",
         "Bananas on the ceiling make for a funny breakfast.",
         "He spilled coffee on his homework right before class.",

@@ -1,8 +1,8 @@
 from __future__ import annotations
 import time
 from typing import Optional
-
-
+from keyboard_enums import BACKSPACE, DEL
+from constants import MEAN_WORD_LENGTH, SECONDS_PER_MINUTE
 from data.sentences import SentenceSize, get_random_sentence
 
 class Game:
@@ -12,7 +12,6 @@ class Game:
         self.index: int = 0
         self.wrong_count: int = 0
         self.total_typed: int = 0
-        self.success: bool = False
         self.start_time: Optional[float] = None
         self.end_time: Optional[float] = None
 
@@ -70,9 +69,6 @@ class Game:
     def increase_mistakes(self) -> None:
         self.wrong_count += 1 
 
-    def set_result(self) -> None:
-        self.success = self.index >= len(self.target)
-
     def get_index(self) -> int:
         return self.index
     
@@ -88,13 +84,31 @@ class Game:
     def get_total_typed(self) -> int:
         return self.total_typed
     
-    def is_won(self) -> bool:
-        return self.success
+    def get_net_wpm(self) -> float:
+        elapsed = self.get_time_elapsed()
+        correct_chars = self.total_typed - self.wrong_count
+        return (correct_chars / MEAN_WORD_LENGTH) * (SECONDS_PER_MINUTE / elapsed)
+    
+    def process_char(self, char: str) -> None:
+        if self.target is None:
+            raise Exception("Target is not yet set")
+
+        if char == BACKSPACE:
+            self.decrease_index()
+        
+        self.increase_total_typed()
+
+        expected_char = self.get_current_char() 
+
+        if expected_char == char:
+            self.increase_index()
+        else:
+            self.increase_mistakes()
     
     @property
     def initialized(self) -> bool:
         return self.target is not None
     
     @property
-    def finished(self) -> bool:
-        return self.target is not None and self.target >= len(self.target)
+    def target_typed(self) -> bool:
+        return self.target is not None and self.index >= len(self.target)
