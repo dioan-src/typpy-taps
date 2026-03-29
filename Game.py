@@ -1,12 +1,13 @@
 from __future__ import annotations
 import time
 from typing import Optional
-from keyboard_enums import BACKSPACE, DEL
+from keyboard_enums import BACKSPACE, DEL, GREEN_LETTERS, RED_LETTERS, RESET_LETTERS
 from constants import MEAN_WORD_LENGTH, SECONDS_PER_MINUTE
 from data.sentences import SentenceSize, get_random_sentence
 
 class Game:
     def __init__(self) -> None:
+        self.mode: Optional[str]
         self.size: SentenceSize = None
         self.target: Optional[str] = None
         self.index: int = 0
@@ -105,6 +106,28 @@ class Game:
         else:
             self.increase_mistakes()
     
+    def draw(self, last_char: str | None = None) -> tuple[str, str]:
+        passed = self.target[:self.index]
+        leftover =self.target[self.index:]
+
+        display = f"{GREEN_LETTERS}{passed}{RESET_LETTERS}{leftover}"
+        pointer = " " * self.index + "↑"
+
+        if (last_char 
+            and not last_char == BACKSPACE 
+            and not self.target_typed 
+            and last_char != self.target[self.index-1]
+        ):
+            display = (
+                f"{GREEN_LETTERS}{self.target[:self.index]}{RESET_LETTERS}"
+                f"{RED_LETTERS}{last_char}{RESET_LETTERS}"
+                f"{self.target[self.index:]}"
+            )
+            pointer = " " * (self.index+1) + "↑"
+
+        return display, pointer
+
+
     @property
     def initialized(self) -> bool:
         return self.target is not None

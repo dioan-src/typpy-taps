@@ -11,14 +11,14 @@ _SENTENCES = {
     SentenceSize.TINY: [
         "The cat sat.",
         "I love tea.",
-        "Sun rises."
+        "Sun rises.",
     ],
     SentenceSize.SMALL: [
-        'The brown fox jumps over dogs.'
-        'Typing fast is satisfying!'
-        'Keys clack, fingers attack.'
-        'Hello, world! Lets code.'
-        'Caps lock is my mortal enemy.'
+        'The brown fox jumps over dogs.',
+        'Typing fast is satisfying!',
+        'Keys clack, fingers attack.',
+        'Hello, world! Lets code.',
+        'Caps lock is my mortal enemy.',
     ],
     SentenceSize.MEDIUM: [
         "I accidentally wore socks that didn't match today.",
@@ -30,7 +30,7 @@ _SENTENCES = {
     SentenceSize.LARGE: [
         "The quick brown fox jumps over the lazy dog while the birds chirp happily in the morning sun.",
         "As she strolled along the riverbank, the wind carried the scent of blooming flowers, filling her with a sense of peace and nostalgia.",
-        "Learning to type accurately and quickly takes patience and consistent practice, but the rewards are immense for any aspiring writer or coder."
+        "Learning to type accurately and quickly takes patience and consistent practice, but the rewards are immense for any aspiring writer or coder.",
     ]
 }
 
